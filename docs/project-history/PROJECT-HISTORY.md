@@ -16,7 +16,8 @@ Project creation → Environment setup → Browser / Playwright setup → Full U
 → Feature-by-feature implementation (readiness gate → implementation → implementation gate → feature gate)
 → Cross-Feature Journeys → Full-suite execution → Documentation reconciliation
 → CAT-004–CAT-006 reconciliation → Repository cleanup → Full-suite runs → Portfolio demo and recording
-→ Release readiness and publication preparation → (first commit, publication)
+→ Release readiness and publication preparation → Final review and corrections → Publication boundary
+→ First commit and publication → Public repository hardening
 ```
 
 The project is intentionally separate from the QACLOUD Market API automation project. It uses no API calls for setup or cleanup (Architecture §12.1); the browser's own requests are only observed.
@@ -57,6 +58,8 @@ The project is intentionally separate from the QACLOUD Market API automation pro
 | H1/H2 implementation | PASS — H1/H2 implementation verified: six files; targeted run 10 passed; full suite 97/97 | §17 below | 2026-10-01 |
 | H1/H2 verification and documentation reconciliation | CONDITIONAL PASS — documentation corrections identified; the corrections are documentation-only | §17 below | 2026-10-01 |
 | Publication boundary | Discovery screenshots and the portfolio demo and recording harness excluded from the public repository and kept locally (owner decision) | §18 below | 2026-10-01 |
+| First commit and publication | Public GitHub repository created; one commit of the 89 approved files, pushed to `main` and verified | §19 below | 2026-10-01 |
+| Public repository hardening | Documentation cleanup, GitHub topics, a static-check CI workflow and the MIT license (owner-approved) | §19 below | 2026-10-01 |
 
 ## 3. Feature gates
 
@@ -172,13 +175,13 @@ All CONFIRMED FROM EXECUTION. `tsc` and ESLint were clean and the inventory was 
 | Result | **97 passed · 0 failed · 0 flaky · 0 skipped** · `retries: 0`; `.last-run.json` status `passed` |
 | Account state | Identical before and after: 33 products, no `AUT-` product, empty basket, the two protected delivered orders unchanged |
 
-It was the most recent full run when this entry was written; later full runs are recorded in §14 and §16. Its HTML report is the one shown in the walkthrough; `playwright-report/` is gitignored and replaced by the next run.
+It was the most recent full run when this entry was written; later full runs are recorded in §14, §16 and §17. Its HTML report is the one shown in the walkthrough; `playwright-report/` is gitignored and replaced by the next run.
 
 ## 6. Known limitations and open items
 
 | Item | Status |
 |---|---|
-| CI | **Not implemented.** Architecture §22 is design only; the suite has been run locally only |
+| CI | **Static checks only** since 2026-10-01 (§19): dependency install, TypeScript, ESLint and the test inventory. The browser suite is not run in CI (no CI credentials; one shared, mutated account; Architecture §22) and has been run locally only |
 | `CAT-004`–`CAT-006` | Implemented inside `PM-001` and `PM-017` (2026-09-27); passed in the 16:48 full run (the 16:31 run stopped before Product Management) |
 | Concurrent runs | All projects share one `test-results/` folder, and every run clears it first. Two Playwright runs at once break the first one (§5.3). Run one at a time |
 | 13 Exploratory / Deferred scenarios | Not implemented, by design (TEST-DESIGN §9, §11.1) |
@@ -194,7 +197,7 @@ It was the most recent full run when this entry was written; later full runs are
 | `FIL-018` | Kept as is; its pass depends on response order (INFERRED, never observed failing). A failure is to be reported with its request timing, never retried (§9) |
 | Documentation cleanup (owner decision D6) | Done in the repository consistency review (2026-09-28, §10) |
 | Seed-data dependencies | `ORD-001`–`ORD-003` and `LIF-003` need the Delivered seed order (`O62676` since 2026-09-30, §14; `O52638` before); `ORD-007` needs one other order to remain, which the seed order satisfies; `FIL-004` needs a product whose hidden Details match "milk"; `DET-009` needs the first Low Stock card in catalog order to have stock 5–9 (card Low Stock for 1–9, modal only for 1–4, page source; §14). These are properties of the regression account's data, not of the application |
-| Demo specs | `shopper-journey.demo.spec.ts` and `order-lifecycle.demo.spec.ts` predate the combined journey and are kept; whether they are superseded is an open owner decision |
+| Demo specs | Local only since §18. `shopper-journey.demo.spec.ts` and `order-lifecycle.demo.spec.ts` predate the combined journey and are kept; whether they are superseded is an open owner decision |
 
 ## 7. Documentation reconciliation — 2026-09-27
 
@@ -311,7 +314,19 @@ The account's variables were named for the demo it first served. They were renam
 ## 17. Final review, B1 and authentication test effectiveness — 2026-10-01
 
 - **Release recheck (context).** After the §16 correction, a read-only recheck found two stale "most recent full run" claims, in the Architecture status table and the Feature Map's current status; after their owner-approved correction, the recheck concluded release ready with documented limitations. The review below superseded that outcome.
-- **Final comprehensive review (read-only).** A repository-wide review of the documentation, architecture, test design, source, tests, execution evidence and repository safety: **BLOCKED — correction required**. Blocker B1: a literal password for the abandoned probe account was quoted in `docs/discovery/EVIDENCE-LOG.md` (`EV-P1-013`). High finding H1: `AUTH-010`'s assertions were already true when the login form was submitted, so the test could not detect a wrong password being accepted. High finding H2: `AUTH-003`, `AUTH-005` and `AUTH-006` asserted only static markup, the URL or the title, which hold before the page's own authentication check. The review's medium findings (M1–M9) and lower findings remain separate and open; this section does not address them.
+- **Final comprehensive review (read-only).** A repository-wide review of the documentation, architecture, test design, source, tests, execution evidence and repository safety: **BLOCKED — correction required**. Blocker B1: a literal password for the abandoned probe account was quoted in `docs/discovery/EVIDENCE-LOG.md` (`EV-P1-013`). High finding H1: `AUTH-010`'s assertions were already true when the login form was submitted, so the test could not detect a wrong password being accepted. High finding H2: `AUTH-003`, `AUTH-005` and `AUTH-006` asserted only static markup, the URL or the title, which hold before the page's own authentication check. The review's medium findings M1–M9 are listed below; neither they nor the lower findings are addressed by this section.
+- **Medium findings M1–M9 (open).** Each was still present, unchanged, on 2026-10-01 after publication (§19):
+  - **M1.** `FIL-001`, `FIL-003` and `FIL-012` do not check the term matching or the intersection count that their design requires (`search-filtering.md`).
+  - **M2.** `CHK-005`'s persistence assertion, required by `checkout.md`, is not implemented in `checkout.state.spec.ts`.
+  - **M3.** `waitForURL` (15 s, which waits for `load`) is used in `tests/auth.setup.ts`, `src/fixtures/index.ts` and `basket.session.spec.ts`, but the "Navigation boundary" row of §6 lists only `page.reload()` and `networkidle`.
+  - **M4.** Architecture §12.5 (residual-state reporting), §12.6 (startup orphan report) and §16.6/§16.7 (a redirect reported as a setup failure) describe mechanisms that are not implemented.
+  - **M5.** Three Product Management specs (`add-product`, `delete-product`, `lifecycle`) clean up through a module-level `createdNames` list and `afterEach`, not through a fixture as Architecture §12.1 states.
+  - **M6.** Stale or contradictory current statements in the Feature Map: client-side filtering (contradicted later in the same file), personal-account wording, the stock-status behavior and card label that `EV-P2-045` contradicts, and "successful creation is silent" (contradicted by C-1, §10).
+  - **M7.** `DET-009`'s design in `product-details.md` predates the stock thresholds recorded in §14 (card 1–9, modal 1–4; the test needs stock 5–9).
+  - **M8.** DISCOVERY-STATE's "Test identity" line presents the Discovery-period account and `.env` contents as current.
+  - **M9.** `OrdersPanel.ensureOrderAbsent()` decides from a single, non-retrying count, so an order cleanup could skip an order that has not rendered yet (INFERRED risk).
+
+  The lower findings (assertion gaps, locator, synchronization and code-hygiene items, and wording and cross-reference errors) were reported in the review and are not itemized here.
 - **B1.** A design gate approved a single redaction, and the implementation replaced the quoted value on line 309 of `EVIDENCE-LOG.md` with "throwaway probe password; value redacted", changing nothing else. An exact and case-insensitive scan of all 111 publishable files then found no copy of the value (CONFIRMED FROM EXECUTION). B1 is closed. Whether the value still authenticates, and any exposure outside the repository, are NOT VERIFIED; whether to rotate or retire that account is the owner's decision.
 - **Correction to earlier records.** The statements in §13 and §16 that no secret was in any publishable file are CONTRADICTED by B1. Those scans compared the files with the configured account's values and the commit identity, so they did not detect the abandoned probe account's password. The value has since been redacted as above. §13 and §16 are kept as written.
 - **H1/H2 decision (read-only).** Approved for implementation. `AUTH-010` needs an oracle on the real `POST /api/login` response. `AUTH-003`, `AUTH-005` and `AUTH-006` need assertions on the authenticated state itself: the header username, which the pages fill only after `GET /api/profile` succeeds (CONFIRMED FROM SOURCE INSPECTION), and its continuity across the route change and the reload. The architecture is unchanged: `goto()` resolves at `DOMContentLoaded`, readiness belongs to the caller (Architecture §6.7, §15.2), and no navigation, fixture, timeout or retry change was made. The decision also found a failure-message path in the current portal source for a rejected login (CONFIRMED FROM SOURCE INSPECTION), so `AUTH-010`'s design no longer treats the failure as silent; whether the message renders for the real account is NOT VERIFIED.
@@ -327,9 +342,15 @@ The account's variables were named for the demo it first served. They were renam
 - **Decision (owner-approved).** Excluded from the public repository and kept locally: the nine Discovery screenshots (`docs/discovery/screenshots/`) and the portfolio demo and recording harness (`demo/`, `playwright.demo.config.ts`, `playwright.recording.config.ts`). This is an intentional portfolio boundary: the public repository holds the engineering system (configuration, `src/`, `tests/` and the documentation), while portfolio media and the presentation harness stay outside it. Nothing was deleted or moved.
 - **Implementation.** `.gitignore` excludes those four paths. The Evidence Log keeps its screenshot references unchanged, with one note on their publication status. README, `.env.example` and Architecture §20.3 no longer describe the demo, the recording or the demo-only `MARKET_USERNAME`. No source, test, fixture or suite-configuration file changed, and the suite inventory is unchanged at 97 tests. Earlier sections that describe the demo, the recording and the screenshots remain historical records.
 
-## 19. Next steps
+## 19. Publication and public repository hardening — 2026-10-01
 
-1. Owner: a read-only verification of this documentation correction, then release readiness re-confirmation.
-2. Owner: verify the commit identity, then make the first commit and publication. The configured author email is not a noreply address.
-3. Owner: decide what to do with the portfolio walkthrough: re-record it, re-edit it, or label it as of 2026-09-29. It shows pre-change code and a 2026-09-28 README. A recording run after the navigation change is NOT VERIFIED.
-4. CI (Architecture §22, including concurrency control). Not implemented.
+- **Before the first commit (read-only).** A verification of the §17 documentation correction, a release readiness re-confirmation and a further comprehensive project review came before the publication boundary of §18.
+- **First commit and publication (CONFIRMED FROM EXECUTION).** The 89 files of the approved boundary were staged by explicit path and checked against it: no demo, recording, screenshot, video, generated artifact, `.env` or authentication state, and no credential or secret in a scan of every staged file. The commit author is the owner's GitHub noreply address, set for this repository only (owner decision). The public repository `Mohamedshaddad487/QACLOUD-Market-UI-Automation` was created empty, and the single commit `b7dff98` was pushed to `main`. A fresh clone matched the 89 files exactly and passed `tsc`, ESLint and the inventory (97 tests in 34 files) without the local-only files.
+- **Hardening (owner-approved).** Stale publication, run-history and next-step wording corrected (README, Architecture and Test Design status tables, this file); M1–M9 defined in §17; GitHub topics added; a CI workflow added; the MIT license added, superseding the §13 decision of no license file (`package.json` declares `MIT`, and the stale `ISC` in `package-lock.json` became `MIT`). No source, test, fixture, Page Object or suite-configuration file changed.
+- **CI scope.** `.github/workflows/ci.yml` runs `npm ci`, `tsc`, ESLint and the test inventory on Node.js 24, for pushes to `main`, pull requests and manual runs. The browser suite is not run in CI: it needs the real account's credentials, which are not configured as CI secrets, and every run changes that one shared account, so runs must not overlap (Architecture §10.10, §22.6). Architecture §22 keeps the full browser pipeline as design.
+
+## 20. Next steps
+
+1. Open review findings M1–M9 (§17), each to be decided by the owner.
+2. Owner: decide what to do with the portfolio walkthrough outside the repository: re-record it, re-edit it, or label it as of 2026-09-29. It shows pre-change code and a 2026-09-28 README.
+3. Browser execution in CI (Architecture §22): needs CI credentials for the account and the concurrency control of §22.6. Not implemented.

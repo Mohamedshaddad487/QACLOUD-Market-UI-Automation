@@ -50,11 +50,11 @@ Each phase consumes the one before it and adds exactly one new kind of decision.
 | | |
 |---|---|
 | **Project** | QACLOUD-Market-UI-Automation |
-| **Current phase** | Release readiness and publication preparation. This Test Design was approved and implemented; implementation is complete for the approved scope, and the explicit navigation boundary introduced on 2026-10-01 passed targeted validation and a 97/97 full run |
+| **Current phase** | Published (public GitHub repository, 2026-10-01). This Test Design was approved and implemented; implementation is complete for the approved scope, and the explicit navigation boundary introduced on 2026-10-01 passed targeted validation and a 97/97 full run |
 | **Approved inputs** | PASS 1 (Authentication & Session) — APPROVED · PASS 2 (Full UI Discovery, base + 3 addenda) — APPROVED · Feature Map — APPROVED · Architecture — APPROVED |
 | **Discovery evidence boundary** | `EV-P0-001`–`EV-P0-012`, `EV-P1-001`–`EV-P1-018`, `EV-P2-001`–`EV-P2-069`. No discovery has occurred beyond `EV-P2-069`. |
 | **Later evidence** | Reconciliation registers `D-01`–`D-39` (Shopping Basket, 2026-09-24) and `D-40`–`D-46` (Order Lifecycle, 2026-09-26) in `FEATURE-MAP.md` |
-| **Current gate** | Final release readiness — documentation correction; next, release re-confirmation, then the owner's first commit and publication |
+| **Current gate** | None open. The open review findings M1–M9 are listed in `PROJECT-HISTORY.md` §17 |
 | **Implementation status** | **Implemented for the approved scope:** 103 of the 116 scenario IDs, in 96 tests (plus the `setup` project). Breakdown in §11 |
 
 ### Explicit approval requirement

@@ -41,12 +41,12 @@ Read this document after the Feature Map and before any code is written. Every m
 |---|---|
 | **Project** | QACLOUD-Market-UI-Automation |
 | **Target application** | QA Cloud Market (`/market.html`), via the QA Cloud portal (`/`) at `https://www.qacloud.dev` |
-| **Current phase** | Release readiness and publication preparation. Architecture was approved, then implemented feature by feature; the explicit navigation boundary (§6.7) was made on 2026-10-01 |
+| **Current phase** | Published (public GitHub repository, 2026-10-01). Architecture was approved, then implemented feature by feature; the explicit navigation boundary (§6.7) was made on 2026-10-01 |
 | **Approved inputs** | PASS 1 (Authentication & Session) — COMPLETE + APPROVED · PASS 2 (Full UI Discovery, base + 3 addenda) — COMPLETE + APPROVED · Feature Map — COMPLETE + APPROVED |
 | **Discovery evidence boundary** | `EV-P0-001`–`EV-P0-012`, `EV-P1-001`–`EV-P1-018`, `EV-P2-001`–`EV-P2-069`. No discovery has occurred beyond `EV-P2-069`. |
 | **Later evidence** | Re-discovery and reconciliation registers `D-01`–`D-39` (Shopping Basket, 2026-09-24) and `D-40`–`D-46` (Order Lifecycle, 2026-09-26), in `FEATURE-MAP.md`. The historical Evidence Log remains closed at `EV-P2-069` |
-| **Current gate** | Final release readiness — documentation correction; next, release re-confirmation, then the owner's first commit and publication |
-| **Implementation status** | **Implemented** for the approved scope: 3 pages, 3 panels, 10 components, 4 modals, 3 fixture modules, 5 support modules, 34 spec files (97 tests including `setup`), 13 Playwright projects. **No CI exists** (§22 is design only). Details: §4, §9, §20, and `docs/project-history/PROJECT-HISTORY.md` |
+| **Current gate** | None open. The open review findings M1–M9 are listed in `PROJECT-HISTORY.md` §17 |
+| **Implementation status** | **Implemented** for the approved scope: 3 pages, 3 panels, 10 components, 4 modals, 3 fixture modules, 5 support modules, 34 spec files (97 tests including `setup`), 13 Playwright projects. **CI runs static checks only** (§22); the browser suite is run locally. Details: §4, §9, §20, and `docs/project-history/PROJECT-HISTORY.md` |
 
 ### Approval requirement — explicit
 
@@ -1422,7 +1422,7 @@ Reporting exists to answer one question fast: **why did this fail, and what stat
 | Local | `list` + `html` | Immediate console feedback; HTML for investigation |
 | CI | `html` + a machine-readable reporter (e.g. JUnit) + `github` where applicable | Human report as artifact; machine format for CI surfacing |
 
-Concrete reporter configuration is deferred (§29) — this section fixes intent, not syntax. *As implemented:* the local `list` + `html` reporters. The CI reporters are not configured, because no CI exists yet (§22).
+Concrete reporter configuration is deferred (§29) — this section fixes intent, not syntax. *As implemented:* the local `list` + `html` reporters. The CI reporters are not configured, because CI does not run the browser suite (§22).
 
 ### 21.3 Failure artifacts
 
@@ -1465,6 +1465,8 @@ Artifacts are retained long enough to investigate a failure and no longer. Becau
 > **Design level only.** No workflow file is created by this task.
 >
 > **Status 2026-09-27:** still design only. The repository contains **no CI configuration**; the full suite has been run locally only. CI, including the concurrency control of §22.6, is a Release Gate item.
+>
+> **Status 2026-10-01:** `.github/workflows/ci.yml` implements the static part only: checkout, Node.js 24 with the npm cache, `npm ci`, `tsc --noEmit`, ESLint and `npx playwright test --list`, which loads the configuration and every spec without a browser or a login. It runs on pushes to `main`, on pull requests and on demand. The browser suite, and with it §22.3–§22.8, is **not implemented**: no credentials are configured as CI secrets, and every run changes the one shared account (§10.10), so it would also need the concurrency control of §22.6. The browser suite is run locally only.
 
 ### 22.1 Pipeline shape
 
