@@ -1,0 +1,41 @@
+node_modules/
+dist/
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+*.trace.zip
+
+# Playwright MCP raw discovery artifacts (may transiently contain sensitive form values)
+.playwright-mcp/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Local run logs (e.g. saved full-suite console output)
+*.log
+
+# Portfolio demo recordings (kept locally, never committed)
+artifacts/
+
+# Excluded from the public repository by owner decision (kept locally):
+# Discovery screenshots, and the portfolio demo and recording harness
+/docs/discovery/screenshots/
+/demo/
+/playwright.demo.config.ts
+/playwright.recording.config.ts
+
+# Claude Code local state
+.claude/
+
+# Development-tool configuration (not part of the framework)
+.mcp.json
+
+# Editor / OS
+.DS_Store
+Thumbs.db
